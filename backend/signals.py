@@ -48,8 +48,8 @@ def extract_signals(messages: list[dict]) -> dict:
     return json.loads(raw[start:end])
 
 
-def signals_to_rows(conversation_id: str, extracted: dict) -> list[dict]:
-    now = datetime.now(EASTERN).isoformat()
+def signals_to_rows(conversation_id: str, extracted: dict, timestamp: str = None) -> list[dict]:
+    now = timestamp or datetime.now(EASTERN).isoformat()
     rows = []
     for signal_type in ("mood", "energy", "stress", "anxiety", "sleep_quality"):
         value = extracted.get(signal_type)

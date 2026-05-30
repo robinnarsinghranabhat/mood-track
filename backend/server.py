@@ -79,8 +79,10 @@ def end_conversation(conv_id: str):
     if not messages:
         return {"signals": {}}
 
+    conv_time = db.get_conversation_created_at(conv_id)
+
     extracted = extract_signals(messages)
-    rows = signals_to_rows(conv_id, extracted)
+    rows = signals_to_rows(conv_id, extracted, timestamp=conv_time)
     db.save_signals(conv_id, rows)
     db.update_conversation_summary(conv_id, extracted.get("summary", ""), extracted)
     return {"signals": extracted}
@@ -112,10 +114,10 @@ async def analyze_audio(conv_id: str):
     for f in audio_files:
         combined += f.read_bytes()
 
-    timestamp = datetime.now(EASTERN).isoformat()
+    conv_time = db.get_conversation_created_at(conv_id)
     biomarkers = extract_voice_biomarkers(combined)
     if biomarkers:
-        rows = biomarkers_to_rows(conv_id, biomarkers, timestamp)
+        rows = biomarkers_to_rows(conv_id, biomarkers, conv_time)
         db.save_signals(conv_id, rows)
 
     return {"biomarkers": biomarkers}

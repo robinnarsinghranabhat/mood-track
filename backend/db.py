@@ -61,6 +61,15 @@ def create_conversation():
     return {"id": conv_id, "created_at": now}
 
 
+def get_conversation_created_at(conv_id: str) -> str:
+    conn = get_conn()
+    row = conn.execute("SELECT created_at FROM conversations WHERE id = ?", (conv_id,)).fetchone()
+    conn.close()
+    if row:
+        return row["created_at"]
+    return datetime.now(EASTERN).isoformat()
+
+
 def ensure_conversation(conv_id: str):
     conn = get_conn()
     existing = conn.execute("SELECT id FROM conversations WHERE id = ?", (conv_id,)).fetchone()
