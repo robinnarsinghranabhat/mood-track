@@ -95,14 +95,30 @@ async def upload_audio(conv_id: str, file: UploadFile = File(...)):
     file_path = conv_dir / file.filename
     content = await file.read()
     file_path.write_bytes(content)
+    return {"path": str(file_path)}
+
+
+@app.post("/conversations/{conv_id}/analyze-audio")
+async def analyze_audio(conv_id: str):
+    conv_dir = AUDIO_DIR / conv_id
+    if not conv_dir.exists():
+        return {"biomarkers": None, "error": "No audio files found"}
+
+    audio_files = sorted(conv_dir.glob("*.webm"))
+    if not audio_files:
+        return {"biomarkers": None, "error": "No audio files found"}
+
+    combined = b""
+    for f in audio_files:
+        combined += f.read_bytes()
 
     timestamp = datetime.now(PACIFIC).isoformat()
-    biomarkers = extract_voice_biomarkers(content)
+    biomarkers = extract_voice_biomarkers(combined)
     if biomarkers:
         rows = biomarkers_to_rows(conv_id, biomarkers, timestamp)
         db.save_signals(conv_id, rows)
 
-    return {"path": str(file_path), "biomarkers": biomarkers}
+    return {"biomarkers": biomarkers}
 
 
 # --- Transcribe ---

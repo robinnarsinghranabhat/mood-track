@@ -225,12 +225,12 @@ const App = (() => {
   }
 
   async function handleVoiceInput(transcript, audioBlob) {
-    if (!transcript || !conversationId) return;
+    if (!transcript) return;
     Chat.addMessage('user', transcript, audioBlob);
-    if (audioBlob) {
+    await sendAndRespond(transcript);
+    if (audioBlob && conversationId) {
       api.uploadAudio(conversationId, audioBlob);
     }
-    await sendAndRespond(transcript);
   }
 
   async function sendAndRespond(text) {
@@ -269,6 +269,7 @@ const App = (() => {
   async function endConversation() {
     if (!conversationId) return;
     try {
+      fetch(`${BACKEND_URL}/conversations/${conversationId}/analyze-audio`, { method: 'POST' }).catch(() => {});
       const result = await api.endConversation(conversationId);
       const s = result.signals;
       Chat.addMessage('assistant',
