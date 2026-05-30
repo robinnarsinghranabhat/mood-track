@@ -1,5 +1,9 @@
 import os
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
+
+PACIFIC = ZoneInfo("America/Los_Angeles")
 
 import anthropic
 from dotenv import load_dotenv
@@ -11,6 +15,7 @@ from pydantic import BaseModel
 import db
 from agent import CHECKIN_SYSTEM_PROMPT
 from signals import extract_signals, signals_to_rows
+from voice_biomarkers import extract_voice_biomarkers, biomarkers_to_rows
 
 load_dotenv()
 
@@ -90,7 +95,14 @@ async def upload_audio(conv_id: str, file: UploadFile = File(...)):
     file_path = conv_dir / file.filename
     content = await file.read()
     file_path.write_bytes(content)
-    return {"path": str(file_path)}
+
+    timestamp = datetime.now(PACIFIC).isoformat()
+    biomarkers = extract_voice_biomarkers(content)
+    if biomarkers:
+        rows = biomarkers_to_rows(conv_id, biomarkers, timestamp)
+        db.save_signals(conv_id, rows)
+
+    return {"path": str(file_path), "biomarkers": biomarkers}
 
 
 # --- Transcribe ---

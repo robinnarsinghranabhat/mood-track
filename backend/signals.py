@@ -1,6 +1,9 @@
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+PACIFIC = ZoneInfo("America/Los_Angeles")
 
 import anthropic
 from dotenv import load_dotenv
@@ -46,7 +49,7 @@ def extract_signals(messages: list[dict]) -> dict:
 
 
 def signals_to_rows(conversation_id: str, extracted: dict) -> list[dict]:
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(PACIFIC).isoformat()
     rows = []
     for signal_type in ("mood", "energy", "stress", "anxiety", "sleep_quality"):
         value = extracted.get(signal_type)

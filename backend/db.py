@@ -1,7 +1,10 @@
 import json
 import sqlite3
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+PACIFIC = ZoneInfo("America/Los_Angeles")
 
 DB_PATH = "moodtrack.db"
 
@@ -51,7 +54,7 @@ def init_db():
 def create_conversation():
     conn = get_conn()
     conv_id = f"conv_{uuid.uuid4().hex[:8]}"
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(PACIFIC).isoformat()
     conn.execute("INSERT INTO conversations (id, created_at) VALUES (?, ?)", (conv_id, now))
     conn.commit()
     conn.close()
@@ -62,7 +65,7 @@ def ensure_conversation(conv_id: str):
     conn = get_conn()
     existing = conn.execute("SELECT id FROM conversations WHERE id = ?", (conv_id,)).fetchone()
     if not existing:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(PACIFIC).isoformat()
         conn.execute("INSERT INTO conversations (id, created_at) VALUES (?, ?)", (conv_id, now))
         conn.commit()
     conn.close()
@@ -71,7 +74,7 @@ def ensure_conversation(conv_id: str):
 def add_message(conversation_id: str, role: str, text: str):
     conn = get_conn()
     msg_id = f"msg_{uuid.uuid4().hex[:8]}"
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(PACIFIC).isoformat()
     conn.execute(
         "INSERT INTO messages (id, conversation_id, role, text, created_at) VALUES (?, ?, ?, ?, ?)",
         (msg_id, conversation_id, role, text, now),

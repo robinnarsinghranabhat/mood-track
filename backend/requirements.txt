@@ -3,3 +3,5 @@ uvicorn
 anthropic
 python-dotenv
 python-multipart
+librosa
+praat-parselmouth
