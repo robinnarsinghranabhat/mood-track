@@ -58,28 +58,22 @@
 
     <!-- Dashboard Tab -->
     <section id="tab-dashboard" class="tab-content">
-      <div id="summary-cards">
-        <article class="summary-card">
-          <h4>Mood</h4>
-          <p class="score" id="mood-score">--</p>
-          <small id="mood-trend"></small>
-        </article>
-        <article class="summary-card">
-          <h4>Energy</h4>
-          <p class="score" id="energy-score">--</p>
-          <small id="energy-trend"></small>
-        </article>
-        <article class="summary-card">
-          <h4>Stress</h4>
-          <p class="score" id="stress-score">--</p>
-          <small id="stress-trend"></small>
-        </article>
+      <div id="time-range">
+        <button class="range-btn active" data-range="all">All</button>
+        <button class="range-btn" data-range="week">Week</button>
+        <button class="range-btn" data-range="month">Month</button>
       </div>
-      <div id="chart-mood"></div>
-      <div id="chart-energy-stress"></div>
-      <div id="topics-section">
-        <h4>Recent Topics</h4>
-        <div id="topics-tags"></div>
+      <div id="chart-signals"></div>
+      <div id="detail-panel" class="hidden">
+        <article>
+          <div id="detail-header">
+            <h4 id="detail-date"></h4>
+            <button id="detail-close" class="outline secondary">&times;</button>
+          </div>
+          <div id="detail-scores"></div>
+          <div id="detail-summary"></div>
+          <div id="detail-topics"></div>
+        </article>
       </div>
     </section>
   </main>

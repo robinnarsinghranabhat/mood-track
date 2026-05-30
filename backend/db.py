@@ -97,7 +97,9 @@ def get_messages(conversation_id: str):
 def list_conversations(limit: int = 20):
     conn = get_conn()
     rows = conn.execute(
-        "SELECT id, created_at, summary FROM conversations ORDER BY created_at DESC LIMIT ?",
+        """SELECT c.id, c.created_at, c.summary FROM conversations c
+           WHERE EXISTS (SELECT 1 FROM messages m WHERE m.conversation_id = c.id)
+           ORDER BY c.created_at DESC LIMIT ?""",
         (limit,),
     ).fetchall()
     conn.close()
@@ -144,7 +146,7 @@ def save_signals(conversation_id: str, signals: list[dict]):
 
 def get_signals(start: str | None = None, end: str | None = None, types: list[str] | None = None):
     conn = get_conn()
-    query = "SELECT timestamp, signal_type, value, label, context FROM signals WHERE 1=1"
+    query = "SELECT timestamp, signal_type, value, label, context, conversation_id FROM signals WHERE 1=1"
     params = []
     if start:
         query += " AND timestamp >= ?"
