@@ -242,50 +242,94 @@ header nav {
 }
 
 /* Dashboard */
-#summary-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+#time-range {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-.summary-card {
-  text-align: center;
-  padding: 1rem;
-  margin-bottom: 0;
-}
-
-.summary-card h4 {
-  margin-bottom: 0.25rem;
+.range-btn {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  background: none;
+  border: 1px solid var(--pico-muted-border-color);
+  border-radius: 6px;
+  cursor: pointer;
   color: var(--pico-muted-color);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
-.score {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--brand);
+.range-btn.active {
+  background: var(--brand);
+  color: white;
+  border-color: var(--brand);
+}
+
+#chart-signals {
+  margin-bottom: 1rem;
+}
+
+#detail-panel article {
+  margin-bottom: 1rem;
+}
+
+#detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#detail-header h4 {
   margin: 0;
 }
 
-#chart-mood,
-#chart-energy-stress {
-  margin-bottom: 1.5rem;
+#detail-close {
+  padding: 0.2rem 0.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
 }
 
-#topics-tags {
+#detail-scores {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 0.75rem 0;
+}
+
+.detail-score-item {
+  text-align: center;
+  min-width: 70px;
+}
+
+.detail-score-item .label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--pico-muted-color);
+  letter-spacing: 0.05em;
+}
+
+.detail-score-item .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+#detail-summary {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+#detail-topics {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .topic-tag {
   background: var(--user-bg);
-  padding: 0.3rem 0.8rem;
+  padding: 0.25rem 0.7rem;
   border-radius: 999px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--brand);
 }
 

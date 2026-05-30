@@ -172,7 +172,9 @@ const App = (() => {
       messages = [];
     }
 
-    document.getElementById('end-session-btn').disabled = false;
+    const hasSignals = await fetch(`${BACKEND_URL}/conversations/${convId}/signals`).then(r => r.json()).catch(() => null);
+    document.getElementById('end-session-btn').disabled = !!(hasSignals && !hasSignals.error);
+    setInputEnabled(!(hasSignals && !hasSignals.error));
     highlightSidebarItem(convId);
   }
 
@@ -206,12 +208,7 @@ const App = (() => {
     Chat.clearMessages();
     document.getElementById('empty-state')?.remove();
 
-    try {
-      const conv = await api.createConversation();
-      conversationId = conv.id;
-    } catch {
-      conversationId = `conv_${Date.now()}`;
-    }
+    conversationId = null;
     messages = [];
     setInputEnabled(true);
     document.getElementById('end-session-btn').disabled = false;
@@ -219,12 +216,10 @@ const App = (() => {
     const greeting = "Hey, how are you doing today? What's on your mind?";
     Chat.addMessage('assistant', greeting);
     messages.push({ role: 'assistant', text: greeting });
-
-    loadSidebar();
   }
 
   async function handleUserInput(text) {
-    if (!text.trim() || !conversationId) return;
+    if (!text.trim()) return;
     Chat.addMessage('user', text);
     await sendAndRespond(text);
   }
@@ -239,6 +234,14 @@ const App = (() => {
   }
 
   async function sendAndRespond(text) {
+    if (!conversationId) {
+      try {
+        const conv = await api.createConversation();
+        conversationId = conv.id;
+      } catch {
+        conversationId = `conv_${Date.now()}`;
+      }
+    }
     messages.push({ role: 'user', text });
 
     Chat.showTyping();
