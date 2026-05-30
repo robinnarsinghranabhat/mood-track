@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-PACIFIC = ZoneInfo("America/Los_Angeles")
+EASTERN = ZoneInfo("America/New_York")
 
 DB_PATH = "moodtrack.db"
 
@@ -54,7 +54,7 @@ def init_db():
 def create_conversation():
     conn = get_conn()
     conv_id = f"conv_{uuid.uuid4().hex[:8]}"
-    now = datetime.now(PACIFIC).isoformat()
+    now = datetime.now(EASTERN).isoformat()
     conn.execute("INSERT INTO conversations (id, created_at) VALUES (?, ?)", (conv_id, now))
     conn.commit()
     conn.close()
@@ -65,7 +65,7 @@ def ensure_conversation(conv_id: str):
     conn = get_conn()
     existing = conn.execute("SELECT id FROM conversations WHERE id = ?", (conv_id,)).fetchone()
     if not existing:
-        now = datetime.now(PACIFIC).isoformat()
+        now = datetime.now(EASTERN).isoformat()
         conn.execute("INSERT INTO conversations (id, created_at) VALUES (?, ?)", (conv_id, now))
         conn.commit()
     conn.close()
@@ -74,7 +74,7 @@ def ensure_conversation(conv_id: str):
 def add_message(conversation_id: str, role: str, text: str):
     conn = get_conn()
     msg_id = f"msg_{uuid.uuid4().hex[:8]}"
-    now = datetime.now(PACIFIC).isoformat()
+    now = datetime.now(EASTERN).isoformat()
     conn.execute(
         "INSERT INTO messages (id, conversation_id, role, text, created_at) VALUES (?, ?, ?, ?, ?)",
         (msg_id, conversation_id, role, text, now),
@@ -122,12 +122,19 @@ def get_conversation_signals(conversation_id: str):
         "SELECT extracted_data, created_at FROM conversations WHERE id = ?",
         (conversation_id,),
     ).fetchone()
+
+    voice_rows = conn.execute(
+        "SELECT signal_type, value FROM signals WHERE conversation_id = ? AND source = 'voice'",
+        (conversation_id,),
+    ).fetchall()
     conn.close()
+
     if not row or not row["extracted_data"]:
         return None
     data = json.loads(row["extracted_data"])
     data["conversation_id"] = conversation_id
     data["created_at"] = row["created_at"]
+    data["voice_biomarkers"] = {r["signal_type"]: r["value"] for r in voice_rows}
     return data
 
 
@@ -146,7 +153,7 @@ def save_signals(conversation_id: str, signals: list[dict]):
 
 def get_signals(start: str | None = None, end: str | None = None, types: list[str] | None = None):
     conn = get_conn()
-    query = "SELECT timestamp, signal_type, value, label, context, conversation_id FROM signals WHERE 1=1"
+    query = "SELECT timestamp, signal_type, value, label, context, conversation_id, source FROM signals WHERE 1=1"
     params = []
     if start:
         query += " AND timestamp >= ?"

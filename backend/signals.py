@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-PACIFIC = ZoneInfo("America/Los_Angeles")
+EASTERN = ZoneInfo("America/New_York")
 
 import anthropic
 from dotenv import load_dotenv
@@ -49,7 +49,7 @@ def extract_signals(messages: list[dict]) -> dict:
 
 
 def signals_to_rows(conversation_id: str, extracted: dict) -> list[dict]:
-    now = datetime.now(PACIFIC).isoformat()
+    now = datetime.now(EASTERN).isoformat()
     rows = []
     for signal_type in ("mood", "energy", "stress", "anxiety", "sleep_quality"):
         value = extracted.get(signal_type)

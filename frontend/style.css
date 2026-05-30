@@ -313,6 +313,17 @@ header nav {
   color: var(--brand);
 }
 
+.detail-divider {
+  width: 100%;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pico-muted-color);
+  border-top: 1px solid var(--pico-muted-border-color);
+  padding-top: 0.5rem;
+  margin-top: 0.25rem;
+}
+
 #detail-summary {
   font-size: 0.9rem;
   line-height: 1.5;

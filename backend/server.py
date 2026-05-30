@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-PACIFIC = ZoneInfo("America/Los_Angeles")
+EASTERN = ZoneInfo("America/New_York")
 
 import anthropic
 from dotenv import load_dotenv
@@ -112,7 +112,7 @@ async def analyze_audio(conv_id: str):
     for f in audio_files:
         combined += f.read_bytes()
 
-    timestamp = datetime.now(PACIFIC).isoformat()
+    timestamp = datetime.now(EASTERN).isoformat()
     biomarkers = extract_voice_biomarkers(combined)
     if biomarkers:
         rows = biomarkers_to_rows(conv_id, biomarkers, timestamp)

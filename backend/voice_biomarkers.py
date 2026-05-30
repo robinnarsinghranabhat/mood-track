@@ -1,4 +1,6 @@
 import io
+import tempfile
+import os
 import numpy as np
 
 try:
@@ -26,7 +28,11 @@ def extract_voice_biomarkers(audio_bytes: bytes) -> dict:
         return {}
 
     try:
-        audio, sr = librosa.load(io.BytesIO(audio_bytes), sr=16000, mono=True)
+        tmp = tempfile.NamedTemporaryFile(suffix=".webm", delete=False)
+        tmp.write(audio_bytes)
+        tmp.close()
+        audio, sr = librosa.load(tmp.name, sr=16000, mono=True)
+        os.unlink(tmp.name)
     except Exception as e:
         print(f"[voice] Audio decode failed (is ffmpeg installed?): {e}")
         return {}
