@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoodTrack</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <ul>
+        <li><strong>MoodTrack</strong></li>
+      </ul>
+      <ul>
+        <li><button class="tab-btn active" data-tab="chat">Check-in</button></li>
+        <li><button class="tab-btn" data-tab="dashboard">Dashboard</button></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Chat Tab -->
+    <section id="tab-chat" class="tab-content active">
+      <div id="chat-layout">
+        <aside id="sidebar">
+          <button id="new-convo-btn">+ New Check-in</button>
+          <div id="convo-list"></div>
+        </aside>
+        <div id="chat-panel">
+          <div id="chat-container">
+            <div id="messages">
+              <div id="empty-state">
+                <p>Start a new check-in to begin.</p>
+              </div>
+            </div>
+            <div id="input-area">
+              <div id="input-row">
+                <input type="text" id="text-input" placeholder="How are you feeling today?" autocomplete="off" disabled>
+                <button id="send-btn" title="Send" disabled>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+                </button>
+                <button id="mic-btn" title="Voice input" disabled>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                </button>
+              </div>
+              <div id="voice-status" class="hidden"></div>
+            </div>
+          </div>
+          <div id="session-controls">
+            <button id="end-session-btn" class="secondary outline" disabled>End Check-in</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Tab -->
+    <section id="tab-dashboard" class="tab-content">
+      <div id="summary-cards">
+        <article class="summary-card">
+          <h4>Mood</h4>
+          <p class="score" id="mood-score">--</p>
+          <small id="mood-trend"></small>
+        </article>
+        <article class="summary-card">
+          <h4>Energy</h4>
+          <p class="score" id="energy-score">--</p>
+          <small id="energy-trend"></small>
+        </article>
+        <article class="summary-card">
+          <h4>Stress</h4>
+          <p class="score" id="stress-score">--</p>
+          <small id="stress-trend"></small>
+        </article>
+      </div>
+      <div id="chart-mood"></div>
+      <div id="chart-energy-stress"></div>
+      <div id="topics-section">
+        <h4>Recent Topics</h4>
+        <div id="topics-tags"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script src="chat.js"></script>
+  <script src="voice.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
